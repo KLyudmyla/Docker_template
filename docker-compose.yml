@@ -1,0 +1,44 @@
+version: '2'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: ng01
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code
+      - ./config/nginx:/etc/nginx/conf.d
+      - /static:/static
+
+    depends_on:
+      - web
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: 12345
+        POSTGRES_DB: postgres
+        POSTGRES_HOST: db
+    volumes:
+        - /dbdata:/var/lib/postgresql/data
+    ports:
+        - "5431:5432"  
+  web:
+    build: .
+    command: bash -c "npm start && python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py collectstatic --noinput && gunicorn reactexample.wsgi -b 0.0.0.0:8000"
+  
+    volumes:
+      - .:/code
+      - /static:/static
+    expose:
+      - "8000"
+    depends_on:
+      - db
+
+
+
+
+ 
+
