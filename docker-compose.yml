@@ -24,7 +24,7 @@ services:
     volumes:
         - /dbdata:/var/lib/postgresql/data
     ports:
-        - "5431:5432"  
+        - "5432:5432"  
   web:
     build: .
     command: bash -c "npm start && python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py collectstatic --noinput && gunicorn reactexample.wsgi -b 0.0.0.0:8000"
